@@ -34,7 +34,6 @@ SECRET_KEY = env(
 )
 
 # Core settings
-# DEBUG = env("DEBUG")
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default = [])
 
 # Quick-start development settings - unsuitable for production
