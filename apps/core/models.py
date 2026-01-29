@@ -64,4 +64,4 @@ class User(AbstractUser, TimeStampedModel, SoftDeleteModel, UUIDModel, StatusMod
     REQUIRED_FIELDS = ["username"]
 
     def __str__(self):
-        return self.username
+        return self.email

@@ -190,5 +190,8 @@ LOGGING = {
 }
 
 
+LOGIN_URL = "core:login"
+LOGIN_REDIRECT_URL = "core:dashboard"
+LOGOUT_REDIRECT_URL = "core:login"
 
 
