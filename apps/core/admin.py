@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from .models import User
+from django.utils.html import format_html
 
 # ── Custom Base Admin for reusable fields ──
 class BaseModelAdmin(admin.ModelAdmin):
@@ -14,24 +15,40 @@ class BaseModelAdmin(admin.ModelAdmin):
 class UserAdmin(DjangoUserAdmin, BaseModelAdmin):
     model = User
     list_display = (
-        "id", "username", "email", "is_staff", "is_active",
+       "avatar_preview", "id", "username", "email", "is_staff", "is_active",
         "is_verified", "status", "created_at", "updated_at"
     )
     search_fields = ("username", "email")
     list_filter = ("is_staff", "is_active", "is_verified", "status", "is_deleted")
-    readonly_fields = ("uuid", "created_at", "updated_at", "date_joined", "last_login")
+    readonly_fields = ("uuid", "created_at", "updated_at", "date_joined", "last_login","avatar_preview")
 
     fieldsets = DjangoUserAdmin.fieldsets + (
-        (None, {"fields": ("phone_number", "avatar", "is_verified", "status", "is_deleted")}),
+        (None, {"fields": ("phone_number", "avatar_preview", "avatar", "is_verified", "status", "is_deleted")}),
     )
     actions = ['soft_delete_users','restore_users']
     
 
 
+    @admin.action(description="Soft delete selected users")
     def soft_delete_users(self, request, queryset):
-        queryset.update(is_deleted=True)
-    soft_delete_users.short_description = "Soft delete selected users"
+        for obj in queryset:
+            obj.is_deleted = True
+            obj.save(update_fields=["is_deleted", "updated_at"])
 
+
+    @admin.action(description="Restore selected users")
     def restore_users(self, request, queryset):
-        queryset.update(is_deleted=False)
-    restore_users.short_description = "Restore selected users"
+        for obj in queryset:
+            obj.is_deleted = False
+            obj.save(update_fields=["is_deleted", "updated_at"])
+
+    
+    def avatar_preview(self, obj):
+        if obj.avatar:
+            return format_html(
+                '<img src="{}" width="60" height="60" style="border-radius:50%; object-fit:cover;" />',
+                obj.avatar.url
+            )
+        return "No Avatar"
+
+    avatar_preview.short_description = "Avatar Preview"
