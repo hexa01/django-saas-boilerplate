@@ -19,7 +19,8 @@ class UserAdmin(DjangoUserAdmin, BaseModelAdmin):
     )
     search_fields = ("username", "email")
     list_filter = ("is_staff", "is_active", "is_verified", "status", "is_deleted")
-    readonly_fields = ("uuid", "created_at", "updated_at")
+    readonly_fields = ("uuid", "created_at", "updated_at", "date_joined", "last_login")
+
     fieldsets = DjangoUserAdmin.fieldsets + (
         (None, {"fields": ("phone_number", "avatar", "is_verified", "status", "is_deleted")}),
     )
