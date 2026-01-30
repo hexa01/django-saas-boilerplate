@@ -53,6 +53,8 @@ class CustomUserManager(BaseUserManager):
 
 # ── Custom User ──
 class User(AbstractUser, TimeStampedModel, SoftDeleteModel, UUIDModel, StatusModel):
+    first_name = models.CharField(max_length = 30)
+    last_name = models.CharField(max_length = 30)
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)

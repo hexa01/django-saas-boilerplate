@@ -8,7 +8,7 @@ User = get_user_model()
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('email','username','password1','password2')
+        fields = ('first_name','last_name','email','username','password1','password2')
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label="Email")

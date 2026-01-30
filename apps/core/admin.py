@@ -1,18 +1,23 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
-from .models import User
+# from .models import User
+from django.contrib.auth import get_user_model
 from django.utils.html import format_html
+from .forms import RegisterForm
+
+User = get_user_model()
 
 # ── Custom Base Admin for reusable fields ──
 class BaseModelAdmin(admin.ModelAdmin):
-    list_display = ("id", "uuid", "status", "is_deleted", "created_at", "updated_at")
+    list_display = ("uuid", "status", "is_deleted", "created_at", "updated_at")
     list_filter = ("status", "is_deleted")
     readonly_fields = ("uuid", "created_at", "updated_at")
 
 
 # ── User Admin ──
 @admin.register(User)
-class UserAdmin(DjangoUserAdmin, BaseModelAdmin):
+class UserAdmin(BaseModelAdmin, DjangoUserAdmin):
+    add_form = RegisterForm
     model = User
     list_display = (
        "avatar_preview", "id", "username", "email", "is_staff", "is_active",
@@ -27,7 +32,12 @@ class UserAdmin(DjangoUserAdmin, BaseModelAdmin):
     )
     actions = ['soft_delete_users','restore_users']
     
-
+    add_fieldsets = (
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "username", "password1", "password2", "is_active", "is_staff", "is_superuser"),
+        }),
+    )
 
     @admin.action(description="Soft delete selected users")
     def soft_delete_users(self, request, queryset):
